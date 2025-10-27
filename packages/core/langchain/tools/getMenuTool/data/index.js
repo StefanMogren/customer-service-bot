@@ -2,6 +2,7 @@ import { tool } from "@langchain/core/tools";
 import { FetchMenu } from "@chatapp/fetch-menu";
 import { z } from "zod";
 
+// Borde göra om denna till att hämta info från Supabase. Tror jag.
 export const getMenuTool = tool(
 	async () => {
 		const menu = await FetchMenu();

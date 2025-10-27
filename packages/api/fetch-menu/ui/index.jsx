@@ -1,6 +1,7 @@
 import "./index.css";
 import axios from "axios";
 
+// Borde göra om denna till att hämta info från Supabase. Tror jag. Kanske.
 export const FetchMenu = async () => {
 	const response = await axios
 		.get("https://airbean-9pcyw.ondigitalocean.app/api/beans/")

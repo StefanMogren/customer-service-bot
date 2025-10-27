@@ -1,0 +1,4 @@
+{
+	"name": "@chatapp/supabase-client",
+	"main": "index.js"
+}
