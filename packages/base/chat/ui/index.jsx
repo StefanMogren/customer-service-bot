@@ -45,8 +45,7 @@ import { ConversationChain } from "langchain/chains";
  */
 const answerTemplate = ChatPromptTemplate.fromMessages([
 	SystemMessagePromptTemplate.fromTemplate(
-		`You are a storyteller who's passionate about the story you've recently created that's called Wayward Ratonga. You're currently answering questions from admirers of your story based on the context you're provided. Try and find an answer from the context.
-		Context: {context}`
+		`Du är en chatbot på en webbsida till företaget TechNova. Du svarar på frågor som användare har angående företaget samt om leveranspolicys.`
 	),
 	// new MessagesPlaceholder("chat_history"),
 	HumanMessagePromptTemplate.fromTemplate("{question}"),
@@ -74,9 +73,9 @@ export const Chat = () => {
 		});
 	}; */
 
-	const combineDocuments = (docs) => {
+	/* 	const combineDocuments = (docs) => {
 		return docs.map((doc) => doc.pageContent).join("\n\n");
-	};
+	}; */
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
