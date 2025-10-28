@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { chain } from "@chatapp/chains";
+import { aiApp } from "@chatapp/msg-persistence";
+import { threadConfig } from "@chatapp/config";
 
 export const useChatLogic = () => {
 	const [messages, setMessages] = useState([]);
@@ -25,7 +27,10 @@ export const useChatLogic = () => {
 		console.log(chain);
 
 		// ----- Anropar AI -----
-		const answer = await chain.invoke({ question });
+		// const answer = await chain.invoke({ question });
+		// Ska typ byta chain.invoke mot app.invoke
+		const answer = await aiApp.invoke({ messages: question }, threadConfig);
+
 		console.log(answer);
 
 		setMessages((prev) => [
