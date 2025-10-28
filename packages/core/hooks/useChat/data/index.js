@@ -24,7 +24,7 @@ export const useChatLogic = () => {
 		setIsAiThinking(true);
 		setMessages((prev) => [...prev, { text: question, role: "user" }]);
 
-		console.log(chain);
+		// console.log(question);
 
 		// ----- Anropar AI -----
 		// const answer = await chain.invoke({ question });

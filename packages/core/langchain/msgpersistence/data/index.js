@@ -13,8 +13,10 @@ import {
 // https://js.langchain.com/docs/tutorials/chatbot/#message-persistence
 
 const callModel = async (state) => {
-	const answer = await chain.invoke(state.messages);
-	// const answer = await chain.invoke({ question });
+	console.log(state.messages[0].content);
+	const question = state.messages[0].content;
+
+	const answer = await chain.invoke({ question });
 	return { messages: answer };
 };
 
