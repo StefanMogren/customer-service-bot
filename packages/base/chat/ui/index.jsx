@@ -1,6 +1,7 @@
 import "./index.css";
 import { Message } from "@chatapp/message";
 import { useChatLogic } from "@chatapp/use-chat-logic";
+import { Loading } from "@chatapp/loading";
 
 export const Chat = () => {
 	const { handleSubmit, isAiThinking, messages } = useChatLogic();
@@ -15,13 +16,7 @@ export const Chat = () => {
 				{messageComponents}
 
 				{/* Tre punkter som är animerade att röra sig som en våg under tiden som AI:n tänker */}
-				{isAiThinking && (
-					<p className='chat__thinking-animation'>
-						<span>.</span>
-						<span>.</span>
-						<span>.</span>
-					</p>
-				)}
+				{isAiThinking && <Loading />}
 			</section>
 			<form className='chat__form' action='post' onSubmit={handleSubmit}>
 				<label className='chat__label' htmlFor='textId'>
