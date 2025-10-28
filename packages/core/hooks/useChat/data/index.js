@@ -5,11 +5,16 @@ export const useChatLogic = () => {
 	const [messages, setMessages] = useState([]);
 	const [isAiThinking, setIsAiThinking] = useState(false);
 
+	// ----- Hanterar submit från formuläret -----
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
+		// ----- Hanterar datan från formuläret -----
 		const formData = new FormData(event.target);
 		const formJson = Object.fromEntries(formData.entries());
+
+		// Erhållet från W3School. Resettar mitt formulär baserat på ID
+		document.getElementById("chatForm").reset();
 		if (!formJson) return;
 
 		const question = formJson.question;
@@ -17,14 +22,17 @@ export const useChatLogic = () => {
 		setIsAiThinking(true);
 		setMessages((prev) => [...prev, { text: question, role: "user" }]);
 
+		console.log(chain);
+
 		// ----- Anropar AI -----
 		const answer = await chain.invoke({ question });
+		console.log(answer);
 
 		setMessages((prev) => [
 			...prev,
 			{
 				role: "assistant",
-				text: answer || "Det blev något fel. Försök igen senare.",
+				text: answer?.response || "Det blev något fel. Försök igen senare.",
 			},
 		]);
 		setIsAiThinking(false);

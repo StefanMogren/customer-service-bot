@@ -11,6 +11,15 @@ import { combineDocuments } from "@chatapp/combinedocuments";
 import { llm } from "@chatapp/llm";
 
 import { StringOutputParser } from "@langchain/core/output_parsers";
+import { ConversationChain } from "langchain/chains";
+
+import { BufferMemory } from "langchain/memory";
+
+const memory = new BufferMemory({
+	memoryKey: "chat_history",
+	returnMessages: true,
+	inputKey: "question",
+});
 
 // Gör om användarens prompt till en fristående och enkel fråga.
 const stanaloneQuestionChain = RunnableSequence.from([
@@ -27,13 +36,20 @@ const retrieverChain = RunnableSequence.from([
 	combineDocuments,
 ]);
 
-const answerChain = RunnableSequence.from([
+/* const answerChain = RunnableSequence.from([
 	answerChatTemplate,
 	llm,
+	// memory,
 	new StringOutputParser(),
-]);
+]); */
 
-export const chain = new RunnableSequence([
+const conversationChain = new ConversationChain({
+	llm,
+	prompt: answerChatTemplate,
+	memory,
+});
+
+export const chain = RunnableSequence.from([
 	{
 		standaloneQuestion: stanaloneQuestionChain,
 		originalQuestion: new RunnablePassthrough(),
@@ -42,5 +58,5 @@ export const chain = new RunnableSequence([
 		context: retrieverChain,
 		question: ({ originalQuestion }) => originalQuestion.question,
 	},
-	answerChain,
+	conversationChain,
 ]);

@@ -13,18 +13,30 @@ export const Chat = () => {
 	return (
 		<section className='chat'>
 			<section className='chat__messages'>
+				{/* ----- Alla chattmeddelanden ----- */}
 				{messageComponents}
 
 				{/* Tre punkter som är animerade att röra sig som en våg under tiden som AI:n tänker */}
 				{isAiThinking && <Loading />}
 			</section>
-			<form className='chat__form' action='post' onSubmit={handleSubmit}>
-				<label className='chat__label' htmlFor='textId'>
+
+			{/* ----- Formuläret ----- */}
+			<form
+				className='chat__form'
+				action='post'
+				onSubmit={handleSubmit}
+				id='chatForm'>
+				<label className='chat__label' htmlFor='questionId'>
 					TechNova Chat bot
 				</label>
 				<section className='chat__input-container'>
-					{/* Textinput */}
-					<input className='chat__input' type='text' name='text' id='textId' />
+					{/* ----- Input-fältet ----- */}
+					<input
+						className='chat__input'
+						type='text'
+						name='question'
+						id='questionId'
+					/>
 					<button className='chat__btn'>Skicka</button>
 				</section>
 			</form>

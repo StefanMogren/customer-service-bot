@@ -5,14 +5,7 @@ import {
 	HumanMessagePromptTemplate,
 } from "@langchain/core/prompts";
 
-// import { BufferMemory } from "langchain/memory";
 import { MessagesPlaceholder } from "@langchain/core/prompts";
-
-/* const memory = new BufferMemory({
-	memoryKey: "chat_history",
-	returnMessages: true,
-	inputKey: "question",
-}); */
 
 export const standaloneQuestionTemplate = ChatPromptTemplate.fromMessages([
 	SystemMessagePromptTemplate.fromTemplate(
@@ -27,6 +20,6 @@ export const answerChatTemplate = ChatPromptTemplate.fromMessages([
 		Dokumentet om företaget har du här {context}.
 		Om du inte kan få ut svaret från dokumenten beklagar du att du inte kan svara på användarens fråga.`
 	),
-	new MessagesPlaceholder("chat_history"),
+	// new MessagesPlaceholder("chat_history"),
 	HumanMessagePromptTemplate.fromTemplate("{question}"),
 ]);
