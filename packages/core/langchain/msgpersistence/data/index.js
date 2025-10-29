@@ -12,12 +12,25 @@ import {
 // Kod för att kunna ha flera konversationer igång samtidigt med olika användare.
 // https://js.langchain.com/docs/tutorials/chatbot/#message-persistence
 
+// Flödet är att "aiApp" anropas på hemsidan
+// "aiApp" är kompilerad med "StateGraph" via variablen "workflow"
+// Den nod som läggs till i "workflow" erhålls från variabeln "callModel"
+// "callModel" får sin data från det som skickas in när "aiApp" anropas
+// "chain" aropas inuti "callModel" för att få svar från AI om frågan som skickas in
+
 const callModel = async (state) => {
-	console.log(state.messages[0].content);
-	const question = state.messages[0].content;
+	// state.messages är en array med alla tidigare prompts för den här sessionen.
+	// Jag måste plocka ut den senaste prompten för att kunna skicka med den till chain.
+	console.log(state.messages);
+
+	const msgLength = state.messages.length;
+	const question = state.messages[msgLength - 1].content;
+	console.log(question);
 
 	const answer = await chain.invoke({ question });
-	return { messages: answer };
+	console.log(answer);
+
+	return { messages: [{ role: "assistant", content: answer.response }] };
 };
 
 const workflow = new StateGraph(MessagesAnnotation)
