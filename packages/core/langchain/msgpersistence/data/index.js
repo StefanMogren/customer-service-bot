@@ -27,10 +27,15 @@ const callModel = async (state) => {
 	const question = state.messages[msgLength - 1].content;
 	console.log(question);
 
-	const answer = await chain.invoke({ question });
+	const answer = await chain.invoke({ question: question });
 	console.log(answer);
 
-	return { messages: [{ role: "assistant", content: answer.response }] };
+	return {
+		messages: [
+			...state.messages,
+			{ role: "assistant", content: answer.response },
+		],
+	};
 };
 
 const workflow = new StateGraph(MessagesAnnotation)

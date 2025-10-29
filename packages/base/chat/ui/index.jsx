@@ -2,6 +2,9 @@ import "./index.css";
 import { Message } from "@chatapp/message";
 import { useChatLogic } from "@chatapp/use-chat-logic";
 import { Loading } from "@chatapp/loading";
+import { v4 as uuid } from "uuid";
+
+const threadConfig = { configurable: { thread_id: uuid() } };
 
 export const Chat = () => {
 	const { handleSubmit, isAiThinking, messages } = useChatLogic();
@@ -24,7 +27,7 @@ export const Chat = () => {
 			<form
 				className='chat__form'
 				action='post'
-				onSubmit={handleSubmit}
+				onSubmit={() => handleSubmit(event, threadConfig)}
 				id='chatForm'>
 				<label className='chat__label' htmlFor='questionId'>
 					TechNova Chat bot

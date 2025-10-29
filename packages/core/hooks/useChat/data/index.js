@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { chain } from "@chatapp/chains";
 import { aiApp } from "@chatapp/msg-persistence";
-import { threadConfig } from "@chatapp/config";
+// import { threadConfig } from "@chatapp/config";
 
 export const useChatLogic = () => {
 	const [messages, setMessages] = useState([]);
 	const [isAiThinking, setIsAiThinking] = useState(false);
 
 	// ----- Hanterar submit från formuläret -----
-	const handleSubmit = async (event) => {
+	const handleSubmit = async (event, threadConfig) => {
 		event.preventDefault();
 
 		// ----- Hanterar datan från formuläret -----
