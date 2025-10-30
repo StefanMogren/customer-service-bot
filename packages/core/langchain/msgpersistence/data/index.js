@@ -18,23 +18,46 @@ import {
 // "callModel" får sin data från det som skickas in när "aiApp" anropas
 // "chain" aropas inuti "callModel" för att få svar från AI om frågan som skickas in
 
-const callModel = async (state) => {
+const callModel = async (state, config) => {
 	// state.messages är en array med alla tidigare prompts för den här sessionen.
 	// Jag måste plocka ut den senaste prompten för att kunna skicka med den till chain.
 	console.log(state.messages);
 
-	const msgLength = state.messages.length;
-	const question = state.messages[msgLength - 1].content;
-	console.log(question);
+	const chatHistory = state.messages.map((message) => {
+		// const key = message.constructor.name;
 
-	const answer = await chain.invoke({ question: question });
+		const role =
+			message.constructor.name === "HumanMessage" ? "user" : "assistant";
+
+		const content = message.content;
+
+		return { role, content };
+	});
+
+	console.log(chatHistory);
+
+	const question = state.messages.at(-1).content;
+	console.log(question);
+	// const messages = [...state.messages]
+
+	// console.log(config.configurable.thread_id);
+	const { thread_id } = config.configurable;
+
+	console.log(thread_id);
+
+	const answer = await chain.invoke(
+		{ question: question, chat_history: chatHistory }
+
+		/* 		{
+			configurable: {
+				sessionId: thread_id,
+			},
+		} */
+	);
 	console.log(answer);
 
 	return {
-		messages: [
-			...state.messages,
-			{ role: "assistant", content: answer.response },
-		],
+		messages: [{ role: "assistant", content: answer }],
 	};
 };
 

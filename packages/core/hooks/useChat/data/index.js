@@ -37,7 +37,8 @@ export const useChatLogic = () => {
 		// messages innehåller en array av objekt, då både med de prompts som skickats in samt de svar AI ger tillbaka.
 		// Delas upp mellan HumanMessage och AIMessage. AIMessage är sist.
 		console.log(response);
-		const aiAnswer = response.messages[response.messages.length - 1];
+		const aiAnswer = response.messages.at(-1);
+		console.log(aiAnswer);
 
 		setMessages((prev) => [
 			...prev,

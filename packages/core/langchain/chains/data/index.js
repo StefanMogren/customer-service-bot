@@ -1,6 +1,7 @@
 import {
 	RunnableSequence,
 	RunnablePassthrough,
+	RunnableWithMessageHistory,
 } from "@langchain/core/runnables";
 import { retrieveDocuments } from "@chatapp/retriever";
 import {
@@ -41,7 +42,8 @@ const answerChain = RunnableSequence.from([
 	llm,
 	// memory,
 	new StringOutputParser(),
-]).withConfig({ run: { inputKey: "question" } });
+]);
+// .withConfig({ run: { inputKey: "question" } });
 
 /* const conversationChain = new ConversationChain({
 	llm,
@@ -57,8 +59,17 @@ export const chain = RunnableSequence.from([
 	{
 		context: retrieverChain,
 		question: ({ originalQuestion }) => originalQuestion.question,
+		chat_history: ({ originalQuestion }) => originalQuestion.chat_history,
 	},
 	answerChain,
 	// conversationChain,
 ]);
+
+// Den lösning ChatGPT gav för att se till så RunnableSequence använder sig av minnet från StateGraph
+/* export const chainWithHistory = new RunnableWithMessageHistory({
+	runnable: chain,
+	getMessageHistory: (sessionId) =>
+	inputMessagesKey: "question",
+	historyMessagesKey: "chat_history",
+}); */
 // .withConfig({ run: { inputKey: "question" } });
