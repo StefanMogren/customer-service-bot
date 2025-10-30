@@ -1,7 +1,6 @@
 import {
 	RunnableSequence,
 	RunnablePassthrough,
-	RunnableWithMessageHistory,
 } from "@langchain/core/runnables";
 import { retrieveDocuments } from "@chatapp/retriever";
 import {
@@ -12,15 +11,6 @@ import { combineDocuments } from "@chatapp/combinedocuments";
 import { llm } from "@chatapp/llm";
 
 import { StringOutputParser } from "@langchain/core/output_parsers";
-import { ConversationChain } from "langchain/chains";
-
-import { BufferMemory } from "langchain/memory";
-
-/* const memory = new BufferMemory({
-	// memoryKey: "chat_history",
-	// returnMessages: true,
-	inputKey: "question",
-}); */
 
 // Gör om användarens prompt till en fristående och enkel fråga.
 const stanaloneQuestionChain = RunnableSequence.from([
@@ -29,6 +19,7 @@ const stanaloneQuestionChain = RunnableSequence.from([
 	new StringOutputParser(),
 ]);
 
+// Hämtar data från Supabase utifrån responsen från "standaloneQuestionChain"
 const retrieverChain = RunnableSequence.from([
 	(data) => {
 		return data.standaloneQuestion;
@@ -37,19 +28,12 @@ const retrieverChain = RunnableSequence.from([
 	combineDocuments,
 ]);
 
+// Ger svar på användarens fråga m.h.a. responsen från "retrieverChain"
 const answerChain = RunnableSequence.from([
 	answerChatTemplate,
 	llm,
-	// memory,
 	new StringOutputParser(),
 ]);
-// .withConfig({ run: { inputKey: "question" } });
-
-/* const conversationChain = new ConversationChain({
-	llm,
-	prompt: answerChatTemplate,
-	// memory,
-}); */
 
 export const chain = RunnableSequence.from([
 	{
@@ -62,14 +46,4 @@ export const chain = RunnableSequence.from([
 		chat_history: ({ originalQuestion }) => originalQuestion.chat_history,
 	},
 	answerChain,
-	// conversationChain,
 ]);
-
-// Den lösning ChatGPT gav för att se till så RunnableSequence använder sig av minnet från StateGraph
-/* export const chainWithHistory = new RunnableWithMessageHistory({
-	runnable: chain,
-	getMessageHistory: (sessionId) =>
-	inputMessagesKey: "question",
-	historyMessagesKey: "chat_history",
-}); */
-// .withConfig({ run: { inputKey: "question" } });

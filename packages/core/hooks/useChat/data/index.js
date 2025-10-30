@@ -23,22 +23,16 @@ export const useChatLogic = () => {
 		setIsAiThinking(true);
 		setMessages((prev) => [...prev, { text: question, role: "user" }]);
 
-		// console.log(question);
+		console.log(question);
 
 		// ----- Anropar AI -----
-		// const answer = await chain.invoke({ question });
-		// Ska typ byta chain.invoke mot app.invoke
 		const response = await aiApp.invoke(
 			{ messages: [{ role: "user", content: question }] },
 			threadConfig
 		);
-
-		// Returneras ett objekt med nyckeln messages
-		// messages innehåller en array av objekt, då både med de prompts som skickats in samt de svar AI ger tillbaka.
-		// Delas upp mellan HumanMessage och AIMessage. AIMessage är sist.
 		console.log(response);
+
 		const aiAnswer = response.messages.at(-1);
-		console.log(aiAnswer);
 
 		setMessages((prev) => [
 			...prev,

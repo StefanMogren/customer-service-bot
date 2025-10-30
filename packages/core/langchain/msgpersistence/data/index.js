@@ -6,26 +6,14 @@ import {
 	StateGraph,
 	MemorySaver,
 } from "@langchain/langgraph/web";
-// @langchain/langgraph använder sig av async_hooks vilket uppenbarligen inte kan köras på webbläsare.
-// Måste använda @langchain/langgraph/web istället
 
-// Kod för att kunna ha flera konversationer igång samtidigt med olika användare.
-// https://js.langchain.com/docs/tutorials/chatbot/#message-persistence
+// Kodflödet är aiApp anropas, workflow/StateGraph går igång, callModel körs och chain/AI anropas inuti callModel
 
-// Flödet är att "aiApp" anropas på hemsidan
-// "aiApp" är kompilerad med "StateGraph" via variablen "workflow"
-// Den nod som läggs till i "workflow" erhålls från variabeln "callModel"
-// "callModel" får sin data från det som skickas in när "aiApp" anropas
-// "chain" aropas inuti "callModel" för att få svar från AI om frågan som skickas in
-
-const callModel = async (state, config) => {
-	// state.messages är en array med alla tidigare prompts för den här sessionen.
-	// Jag måste plocka ut den senaste prompten för att kunna skicka med den till chain.
-	console.log(state.messages);
-
+const callModel = async (state /* config */) => {
+	// Chatthistoriken kommer från StateGraph via "state"
+	// Den historik som hämtas beror på thread_id som skickas in när "aiApp.invoke" körs
 	const chatHistory = state.messages.map((message) => {
-		// const key = message.constructor.name;
-
+		// Behöver "skala bort" all metadata från historiken så enbart "role" och "content" blir kvar
 		const role =
 			message.constructor.name === "HumanMessage" ? "user" : "assistant";
 
@@ -34,33 +22,30 @@ const callModel = async (state, config) => {
 		return { role, content };
 	});
 
-	console.log(chatHistory);
-
+	// Hämtar frågan som skickas in när "aiApp.invoke" körs
 	const question = state.messages.at(-1).content;
+
+	/* const { thread_id } = config.configurable;
+	console.log(thread_id); */
+
 	console.log(question);
-	// const messages = [...state.messages]
 
-	// console.log(config.configurable.thread_id);
-	const { thread_id } = config.configurable;
+	// ----- Anropar AI ----
+	// Skickar med frågan och chatthistoriken
+	const answer = await chain.invoke({
+		question: question,
+		chat_history: chatHistory,
+	});
 
-	console.log(thread_id);
-
-	const answer = await chain.invoke(
-		{ question: question, chat_history: chatHistory }
-
-		/* 		{
-			configurable: {
-				sessionId: thread_id,
-			},
-		} */
-	);
-	console.log(answer);
-
+	// "messages" returneras till StateGraph/workflow och lagras där tillsammans med alla tidigare frågor och svar
+	// aiApp returnerar slutligen en array av objekt med alla meddelanden
 	return {
 		messages: [{ role: "assistant", content: answer }],
 	};
 };
 
+// StateGraph hjälper att lagra data åt ens AI.
+// StateGraph håller koll på vilken data som hör till vilken session genom den "thread_id" som skickas in när "aiApp" anropas.
 const workflow = new StateGraph(MessagesAnnotation)
 	.addNode("model", callModel)
 	.addEdge(START, "model")
