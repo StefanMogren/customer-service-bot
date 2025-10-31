@@ -23,14 +23,14 @@ export const useChatLogic = () => {
 		setIsAiThinking(true);
 		setMessages((prev) => [...prev, { text: question, role: "user" }]);
 
-		console.log(question);
+		// console.log(question);
 
 		// ----- Anropar AI -----
 		const response = await aiApp.invoke(
 			{ messages: [{ role: "user", content: question }] },
 			threadConfig
 		);
-		console.log(response);
+		// console.log(response);
 
 		const aiAnswer = response.messages.at(-1);
 

@@ -9,7 +9,12 @@ import {
 
 // Kodflödet är aiApp anropas, workflow/StateGraph går igång, callModel körs och chain/AI anropas inuti callModel
 
-const callModel = async (state /* config */) => {
+const callModel = async (state, config) => {
+	const { thread_id } = config.configurable;
+	console.log(`thread_id: ${thread_id}`);
+
+	console.log(state.messages);
+
 	// Chatthistoriken kommer från StateGraph via "state"
 	// Den historik som hämtas beror på thread_id som skickas in när "aiApp.invoke" körs
 	const chatHistory = state.messages.map((message) => {
@@ -25,10 +30,7 @@ const callModel = async (state /* config */) => {
 	// Hämtar frågan som skickas in när "aiApp.invoke" körs
 	const question = state.messages.at(-1).content;
 
-	/* const { thread_id } = config.configurable;
-	console.log(thread_id); */
-
-	console.log(question);
+	chatHistory.pop();
 
 	// ----- Anropar AI ----
 	// Skickar med frågan och chatthistoriken
